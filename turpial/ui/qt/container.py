@@ -18,6 +18,7 @@ from turpial.ui.qt.widgets import BarLoadIndicator
 from libturpial.common import OS_MAC
 from libturpial.common.tools import detect_os
 
+
 class Container(QVBoxLayout):
     def __init__(self, base):
         QVBoxLayout.__init__(self)
@@ -73,11 +74,11 @@ class Container(QVBoxLayout):
 
         message = QLabel()
         if with_accounts:
-            text = "%s <a href='cmd:add_columns'>%s</a>" % (i18n.get('you_have_accounts_registered'),
-                i18n.get('add_some_columns'))
+            text = "%s <a href='cmd:add_columns'>%s</a>" % (
+                i18n.get('you_have_accounts_registered'), i18n.get('add_some_columns'))
         else:
-            text = "<a href='cmd:add_accounts'>%s</a> %s" % (i18n.get('add_new_account'),
-                i18n.get('to_start_using_turpial'))
+            text = "<a href='cmd:add_accounts'>%s</a> %s" % (
+                i18n.get('add_new_account'), i18n.get('to_start_using_turpial'))
         message.setText(text)
         message.linkActivated.connect(self.__link_clicked)
         message.setAlignment(Qt.AlignCenter)
@@ -132,7 +133,6 @@ class Container(QVBoxLayout):
         self.child.addWidget(welcome)
         self.child.addSpacing(10)
         self.child.addWidget(message)
-        #self.child.setSpacing(10)
         self.child.addStretch(1)
         self.child.addWidget(loader)
         self.child.setContentsMargins(30, 0, 30, 30)
@@ -165,8 +165,8 @@ class Container(QVBoxLayout):
         welcome.setFont(font)
 
         message = QLabel()
-        text = "%s. <a href='cmd:restart'>%s</a>" % (i18n.get('something_terrible_happened'),
-            i18n.get('try_again'))
+        text = "%s. <a href='cmd:restart'>%s</a>" % (
+            i18n.get('something_terrible_happened'), i18n.get('try_again'))
         message.setText(text)
         message.linkActivated.connect(self.__link_clicked)
         message.setAlignment(Qt.AlignCenter)
@@ -178,7 +178,6 @@ class Container(QVBoxLayout):
         self.child.addWidget(welcome)
         self.child.addSpacing(10)
         self.child.addWidget(message)
-        #self.child.setSpacing(10)
         self.child.addStretch(1)
         self.child.setContentsMargins(30, 0, 30, 30)
 
@@ -275,36 +274,42 @@ class Container(QVBoxLayout):
         for id_, column in self.columns.iteritems():
             if id_ == column_id:
                 column.error_in_conversation(status_root_id)
-        message = self.base.get_error_message_from_response(response, i18n.get('error_loading_conversation'))
+        message = self.base.get_error_message_from_response(
+            response, i18n.get('error_loading_conversation'))
         self.notify_error(column_id, self.base.random_id(), message)
 
     def error_updating_column(self, column_id, response=None):
         self.stop_updating(column_id)
-        message = self.base.get_error_message_from_response(response, i18n.get('error_updating_column'))
+        message = self.base.get_error_message_from_response(
+            response, i18n.get('error_updating_column'))
         self.notify_error(column_id, self.base.random_id(), message)
 
     def error_repeating_status(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        message = self.base.get_error_message_from_response(response, i18n.get('error_repeating_status'))
+        message = self.base.get_error_message_from_response(
+            response, i18n.get('error_repeating_status'))
         self.notify_error(column_id, status_id, message)
 
     def error_deleting_status(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        message = self.base.get_error_message_from_response(response, i18n.get('error_deleting_status'))
+        message = self.base.get_error_message_from_response(
+            response, i18n.get('error_deleting_status'))
         self.notify_error(column_id, status_id, message)
 
     def error_marking_status_as_favorite(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        message = self.base.get_error_message_from_response(response, i18n.get('error_marking_status_as_favorite'))
+        message = self.base.get_error_message_from_response(
+            response, i18n.get('error_marking_status_as_favorite'))
         self.notify_error(column_id, status_id, message)
 
     def error_unmarking_status_as_favorite(self, column_id, status_id, response=None):
         for id_, column in self.columns.iteritems():
             column.release_status(status_id)
-        message = self.base.get_error_message_from_response(response, i18n.get('error_unmarking_status_as_favorite'))
+        message = self.base.get_error_message_from_response(
+            response, i18n.get('error_unmarking_status_as_favorite'))
         self.notify_error(column_id, status_id, message)
 
     def notify_error(self, column_id, id_, message):

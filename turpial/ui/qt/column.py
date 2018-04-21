@@ -2,7 +2,6 @@
 
 # Qt widget to implement statuses column in Turpial
 
-#from PyQt4 import QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QSize
 from PyQt4.QtCore import QRect
@@ -17,7 +16,6 @@ from PyQt4.QtGui import QCursor
 from PyQt4.QtGui import QAction
 from PyQt4.QtGui import QPixmap
 from PyQt4.QtGui import QWidget
-from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QApplication
 from PyQt4.QtGui import QTextDocument
 from PyQt4.QtGui import QStyledItemDelegate
@@ -29,8 +27,13 @@ from turpial.ui.qt.widgets import ImageButton, BarLoadIndicator
 from turpial.ui.qt.preferences import Slider
 
 from libturpial.common import get_preview_service_from_url, unescape_list_name, OS_MAC
-from libturpial.common.tools import get_account_id_from, get_column_slug_from, get_protocol_from,\
-        get_username_from, detect_os
+from libturpial.common.tools import (
+    get_account_id_from,
+    get_column_slug_from,
+    get_protocol_from,
+    get_username_from, detect_os,
+)
+
 
 class StatusesColumn(QWidget):
     NOTIFICATION_ERROR = 'error'
@@ -46,8 +49,6 @@ class StatusesColumn(QWidget):
         self.statuses = []
         self.conversations = {}
         self.id_ = None
-        #self.fgcolor = "#e3e3e3"
-        #self.fgcolor = "#f9a231"
         self.updating = False
         self.last_id = None
 
@@ -108,7 +109,6 @@ class StatusesColumn(QWidget):
         column_slug = column_slug.replace('%23', '#')
         column_slug = column_slug.replace('%40', '@')
 
-        #font = QFont('Titillium Web', 18, QFont.Normal, False)
         # This is to handle the 96dpi vs 72dpi screen resolutions on Mac vs the world
         if detect_os() == OS_MAC:
             font = QFont('Maven Pro Light', 25, 0, False)
@@ -130,7 +130,8 @@ class StatusesColumn(QWidget):
         caption_box.addWidget(self.column_slug)
         caption_box.addStretch(1)
 
-        close_button = ImageButton(self.base, 'action-menu-shadowed.png', i18n.get('column_options'))
+        close_button = ImageButton(
+            self.base, 'action-menu-shadowed.png', i18n.get('column_options'))
         close_button.clicked.connect(self.__show_options_menu)
 
         header_layout = QHBoxLayout()
@@ -151,7 +152,8 @@ class StatusesColumn(QWidget):
         notifications.triggered.connect(self.__toggle_notifications)
         notifications.setToolTip(i18n.get('notifications_toolip'))
 
-        caption = "%s (%sm)" % (i18n.get('update_frequency'), self.base.get_column_update_interval(self.id_))
+        caption = "%s (%sm)" % (
+            i18n.get('update_frequency'), self.base.get_column_update_interval(self.id_))
         update = QAction(caption, self)
         update.triggered.connect(self.show_slider)
         update.setToolTip(i18n.get('update_frequency_tooltip'))
@@ -210,7 +212,7 @@ class StatusesColumn(QWidget):
         cmd = url.split(':')[0]
         status = None
         try:
-            print 'Seeking for status in self array'
+            print('Seeking for status in self array')
             for status_ in self.statuses:
                 if status_.id_ == status_id:
                     status = status_
@@ -218,7 +220,7 @@ class StatusesColumn(QWidget):
             if status is None:
                 raise KeyError
         except KeyError:
-            print 'Seeking for status in conversations array'
+            print('Seeking for status in conversations array')
             for status_root, statuses in self.conversations.iteritems():
                 for item in statuses:
                     if item.id_ == status_id:

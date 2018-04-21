@@ -17,6 +17,7 @@ from PyQt4.QtCore import pyqtSignal
 from turpial.ui.lang import i18n
 from libturpial.common import is_preview_service_supported
 
+
 class StatusesWebView(QWebView):
 
     link_clicked = pyqtSignal(str)
@@ -43,7 +44,6 @@ class StatusesWebView(QWebView):
         self.load_style()
 
         self.show()
-
 
     def __element_clicked(self, qurl):
         try:
@@ -80,13 +80,19 @@ class StatusesWebView(QWebView):
             'action_repeat': os.path.join(self.base.images_path, 'action-repeat.png'),
             'action_quote': os.path.join(self.base.images_path, 'action-quote.png'),
             'action_favorite': os.path.join(self.base.images_path, 'action-favorite.png'),
-            'action_reply_shadowed': os.path.join(self.base.images_path, 'action-reply-shadowed.png'),
-            'action_reply_direct_shadowed': os.path.join(self.base.images_path, 'action-reply-direct-shadowed.png'),
-            'action_repeat_shadowed': os.path.join(self.base.images_path, 'action-repeat-shadowed.png'),
-            'action_quote_shadowed': os.path.join(self.base.images_path, 'action-quote-shadowed.png'),
-            'action_favorite_shadowed': os.path.join(self.base.images_path, 'action-favorite-shadowed.png'),
+            'action_reply_shadowed': os.path.join(
+                self.base.images_path, 'action-reply-shadowed.png'),
+            'action_reply_direct_shadowed': os.path.join(
+                self.base.images_path, 'action-reply-direct-shadowed.png'),
+            'action_repeat_shadowed': os.path.join(
+                self.base.images_path, 'action-repeat-shadowed.png'),
+            'action_quote_shadowed': os.path.join(
+                self.base.images_path, 'action-quote-shadowed.png'),
+            'action_favorite_shadowed': os.path.join(
+                self.base.images_path, 'action-favorite-shadowed.png'),
             'action_delete': os.path.join(self.base.images_path, 'action-delete.png'),
-            'action_delete_shadowed': os.path.join(self.base.images_path, 'action-delete-shadowed.png'),
+            'action_delete_shadowed': os.path.join(
+                self.base.images_path, 'action-delete-shadowed.png'),
             'scrollbar_background_color': self.base.theme['scrollbar']['background_color'],
             'scrollbar_border_color': self.base.theme['scrollbar']['border_color'],
             'scrollbar_handler_color': self.base.theme['scrollbar']['handler_color'],
@@ -126,7 +132,8 @@ class StatusesWebView(QWebView):
         if status.entities:
             # Highlight URLs
             for url in status.entities['urls']:
-                pretty_url = "<a href='%s' title='%s'>%s</a>" % (url.url, url.url, url.display_text)
+                pretty_url = "<a href='%s' title='%s'>%s</a>" % (
+                    url.url, url.url, url.display_text)
                 message = message.replace(url.search_for, pretty_url)
 
                 # Removed inline preview for instagram
@@ -134,21 +141,21 @@ class StatusesWebView(QWebView):
                     if url.url.find('instagram') < 0:
                         media.append(url.url)
 
-                if status.is_quote_status:
+                if status.is_quote_status and hasattr(status.quoted_status, 'username'):
                     quote_username = status.quoted_status.username
                     quote_message = status.quoted_status.text
 
             # Highlight hashtags
-            sorted_hashtags = {}
             for hashtag in status.entities['hashtags']:
-                pretty_hashtag = "<a href='hashtag:%s:%s'>%s</a>" % (hashtag.account_id,
-                        hashtag.display_text[1:], hashtag.display_text)
+                pretty_hashtag = "<a href='hashtag:%s:%s'>%s</a>" % (
+                    hashtag.account_id, hashtag.display_text[1:], hashtag.display_text)
                 pattern = r"%s\b" % hashtag.search_for
                 message = re.sub(pattern, pretty_hashtag, message)
 
             # Highlight mentions
             for mention in status.entities['mentions']:
-                pretty_mention = "<a href='profile:%s'>%s</a>" % (mention.url, mention.display_text)
+                pretty_mention = "<a href='profile:%s'>%s</a>" % (
+                    mention.url, mention.display_text)
                 message = message.replace(mention.search_for, pretty_mention)
 
         if status.repeated_by:
@@ -163,15 +170,27 @@ class StatusesWebView(QWebView):
         else:
             avatar = "file://%s" % os.path.join(self.base.images_path, 'unknown.png')
 
-        attrs = {'status': status, 'message': message, 'repeated_by': repeated_by,
-                'timestamp': timestamp, 'view_conversation': view_conversation,
-                'reply': i18n.get('reply'), 'hide_conversation': hide_conversation,
-                'quote': i18n.get('quote'), 'retweet': i18n.get('retweet'),
-                'mark_as_favorite': i18n.get('mark_as_favorite'), 'delete': i18n.get('delete'),
-                'remove_from_favorites': i18n.get('remove_from_favorites'),
-                'conversation_id': conversation_id, 'in_progress': i18n.get('in_progress'), 
-                'loading': i18n.get('loading'), 'avatar': avatar, 'media': media,
-                'quote_username': quote_username, 'quote_message': quote_message}
+        attrs = {
+            'status': status,
+            'message': message,
+            'repeated_by': repeated_by,
+            'timestamp': timestamp,
+            'view_conversation': view_conversation,
+            'reply': i18n.get('reply'),
+            'hide_conversation': hide_conversation,
+            'quote': i18n.get('quote'),
+            'retweet': i18n.get('retweet'),
+            'mark_as_favorite': i18n.get('mark_as_favorite'),
+            'delete': i18n.get('delete'),
+            'remove_from_favorites': i18n.get('remove_from_favorites'),
+            'conversation_id': conversation_id,
+            'in_progress': i18n.get('in_progress'),
+            'loading': i18n.get('loading'),
+            'avatar': avatar,
+            'media': media,
+            'quote_username': quote_username,
+            'quote_message': quote_message,
+        }
 
         return self.status_template.render(attrs)
 
@@ -185,9 +204,12 @@ class StatusesWebView(QWebView):
             for status in statuses_:
                 content += self.__render_status(status)
             column = self.__load_template('column.html')
-            args = {'stylesheet': self.stylesheet, 'content': content,
+            args = {
+                'stylesheet': self.stylesheet,
+                'content': content,
                 'favorite_tooltip': i18n.get('mark_as_favorite'),
-                'unfavorite_tooltip': i18n.get('remove_from_favorites')}
+                'unfavorite_tooltip': i18n.get('remove_from_favorites'),
+            }
             html = column.render(args)
 
             fd = open('/tmp/turpial-debug.html', 'w')
@@ -237,7 +259,8 @@ class StatusesWebView(QWebView):
     def sync_timestamps(self, statuses):
         for status in statuses:
             new_timestamp = self.base.humanize_timestamp(status.timestamp)
-            cmd = """updateTimestamp('%s', '%s')""" % (status.id_, new_timestamp)
+            full_url = '<a href="cmd:details_menu:{}">{}</a>'.format(status.id_, new_timestamp)
+            cmd = """updateTimestamp('%s', '%s')""" % (status.id_, full_url)
             self.execute_javascript(cmd)
 
     def clear_new_marks(self):
@@ -245,5 +268,5 @@ class StatusesWebView(QWebView):
 
     def load_style(self):
         self.stylesheet = self.__load_stylesheet()
-        self.setStyleSheet("QWidget { background-color: %s}" % self.base.theme['status']['background_color'])
-
+        self.setStyleSheet(
+            "QWidget { background-color: %s}" % self.base.theme['status']['background_color'])
