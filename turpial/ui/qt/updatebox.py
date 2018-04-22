@@ -27,21 +27,22 @@ from turpial.ui.qt.widgets import ImageButton, ErrorLabel, BarLoadIndicator
 from libturpial.common.tools import get_urls
 from libturpial.common import get_username_from, get_protocol_from
 
-MAX_CHAR = 140
+MAX_CHAR = 280
+
 
 class UpdateBox(QWidget):
     def __init__(self, base):
         QWidget.__init__(self)
         self.base = base
         self.showed = False
-        self.setFixedSize(500, 120)
+        self.setFixedSize(500, 160)
 
         self.text_edit = CompletionTextEdit()
 
-        self.upload_button = ImageButton(base, 'action-add-media.png',
-                i18n.get('add_photo'), borders=True)
-        self.short_button = ImageButton(base, 'action-shorten.png',
-                i18n.get('short_urls'), borders=True)
+        self.upload_button = ImageButton(
+            base, 'action-add-media.png', i18n.get('add_photo'), borders=True)
+        self.short_button = ImageButton(
+            base, 'action-shorten.png', i18n.get('short_urls'), borders=True)
 
         font = QFont()
         font.setPointSize(18)
@@ -90,7 +91,6 @@ class UpdateBox(QWidget):
 
         layout = QVBoxLayout()
         layout.setSpacing(0)
-        #layout.addWidget(self.text_edit)
         layout.addLayout(text_edit_box)
         layout.addWidget(self.loader)
         layout.addSpacing(5)
@@ -153,8 +153,8 @@ class UpdateBox(QWidget):
             self.__upload_media()
 
     def __upload_media(self):
-        filename = str(QFileDialog.getOpenFileName(self, i18n.get('upload_image'),
-            self.base.home_path))
+        filename = str(
+            QFileDialog.getOpenFileName(self, i18n.get('upload_image'), self.base.home_path))
 
         if filename != '':
             self.media = filename
@@ -325,8 +325,8 @@ class UpdateBox(QWidget):
         message = unicode(self.text_edit.toPlainText())
 
         if len(message) > 0:
-            confirmation = self.base.show_confirmation_message(i18n.get('confirm_discard'),
-                i18n.get('do_you_want_to_discard_message'))
+            confirmation = self.base.show_confirmation_message(
+                i18n.get('confirm_discard'), i18n.get('do_you_want_to_discard_message'))
             if not confirmation:
                 return
 
@@ -420,7 +420,6 @@ class CompletionTextEdit(QTextEdit):
             return
 
         tc = self.textCursor()
-        extra = (completion.length() - self.completer.completionPrefix().length())
         for i in range(self.completer.completionPrefix().length()):
             tc.deletePreviousChar()
         tc.insertText("%s " % str(completion))
@@ -448,13 +447,11 @@ class CompletionTextEdit(QTextEdit):
     def keyPressEvent(self, event):
         if self.completer and self.completer.popup().isVisible():
             if event.key() in self.IGNORED_KEYS:
-                #event.ignore()
                 return
 
         if event.key() == Qt.Key_Escape:
             self.quit.emit()
             return
-
 
         hasModifier = event.modifiers() != Qt.NoModifier
         enterKey = event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return
@@ -471,20 +468,19 @@ class CompletionTextEdit(QTextEdit):
         QTextEdit.keyPressEvent(self, event)
 
         completionPrefix = self.textUnderCursor()
-        #print completionPrefix.decode('utf-8')
 
         if hasModifier or event.text().isEmpty() or not completionPrefix.startsWith('@'):
             self.completer.popup().hide()
             return
 
-        if completionPrefix.startsWith('@') and completionPrefix[1:] != self.completer.completionPrefix():
+        if (completionPrefix.startsWith('@') and
+                completionPrefix[1:] != self.completer.completionPrefix()):
             self.completer.setCompletionPrefix(completionPrefix[1:])
             popup = self.completer.popup()
             popup.setCurrentIndex(self.completer.completionModel().index(0, 0))
 
         cursor_rect = self.cursorRect()
-        cursor_rect.setWidth(self.completer.popup().sizeHintForColumn(0)
-                + self.completer.popup().verticalScrollBar().sizeHint().width())
+        cursor_rect.setWidth(
+            self.completer.popup().sizeHintForColumn(0) +
+            self.completer.popup().verticalScrollBar().sizeHint().width())
         self.completer.complete(cursor_rect)
-
-
